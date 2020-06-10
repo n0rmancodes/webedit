@@ -81,7 +81,7 @@ function toggle(menu) {
 			document.getElementById("rotate").style.display = "none";
 			document.getElementById("flip").style.display = "none";
 		}
-	} else if (menu == "adj") {
+	} else if (menu == "rsz") {
 		if (document.getElementById("resize").style.display == "") {
 			document.getElementById("rszBtn").classList.remove("active");
 			document.getElementById("resize").style.display = "none";
