@@ -1,0 +1,49 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito&display=swap');
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons&display=swap');
+
+body {
+	font-family: 'Nunito', sans-serif;
+	background: #070707;
+	color: #eaeaea;
+}
+
+h1 {
+	margin-top:0;
+	margin-bottom:3px;
+	
+}
+
+.ico {
+	vertical-align:middle;
+	user-select:none;
+}
+
+button {
+	background:#666;
+	color:white;
+	border:0;
+}
+
+.biggerButton {
+	height:40px;
+	width:auto;
+	cursor:pointer;
+}
+
+biggerButton:hover {
+	background:#292929;
+}
+
+.disabled {
+	background:#8a8a8a;
+	color:#b9b9b9;
+}
+
+.active {
+	background:#292929;
+}
+
+#file_preview {
+	max-height:99%;
+	max-width:99%;
+}

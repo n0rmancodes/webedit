@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>WebEdit</title>
+		<link href="css/style.css" rel="stylesheet">
+		<meta charset="UTF-8">
+		<meta property="og:type" content="website" />
+	</head>
+	<body>
+		<h1>WebEdit</h1>
+		<p id="load">This webapp requires Javascript.</p>
+		<div id="loaded" style="display:none;">
+			<p>Upload an image to get started.</p>
+			<input id="file" type="file" autocomplete="off" accept="image/*" onInput="start()">
+		</div>
+		<div id="editor" style="display:none;">
+			<div style="margin-bottom:5px;">
+				<button id="imageBtn" class="ico material-icons" onClick="toggle('i')">insert_photo</button>
+				<button id="undoBtn" disabled="true" class="ico disabled material-icons" onClick="undo()">undo</button>
+				<button class="ico material-icons" onClick="exportImg()">get_app</button>
+				<div id="imageTop" style="display:none;">
+					<button id="adjBtn" onClick="toggle('adj')">Adjustments</button>
+					<button id="rotBtn" onClick="toggle('rotate')">Rotate</button>
+					<button id="flipBtn" onClick="toggle('flip')">Flip</button>
+					<div id="adj" style="display:none;">
+						<button onClick="effect('bw')">Black & White</button>
+						<button id="rszBtn" onClick="toggle('resize')">Resize</button>
+						<div id="resize" style="display:none;">
+							
+						</div>
+					</div>
+					<div id="rotate" style="display:none;">
+						<button onClick="effect('rotateLeft')">Rotate Left</button>
+						<button onClick="effect('rotateRight')">Rotate Right</button>
+					</div>
+					<div id="flip" style="display:none;">
+						<button onClick="effect('flipX')">Flip Horrizontally</button>
+						<button onClick="effect('flipY')">Flip Vertically</button>
+					</div>
+				</div>
+			</div>
+			<p style="margin:0;" id="status"></p>
+			<image id="file_preview" onContextMenu="return false;" download>
+		</div>
+		<div id="export" style="display:none;">
+			<button class="biggerButton" onClick="exportAs('png')">Export as PNG</button>
+			<button class="biggerButton"onClick="toggle('really')">Start from Beginning</button>
+			<div id="really">
+				<p>Are you sure?</p>
+				<button onClick="start()">Yes</button>
+				<button onClick="toggle('really')">No</button>
+			</div>
+		</div>
+		<script src="https://www.lactame.com/lib/image-js/0.21.2/image.min.js"></script>
+		<script src="js/app.js"></script>
+	</body>
+</html>
