@@ -7,11 +7,30 @@
 		<meta property="og:type" content="website" />
 	</head>
 	<body>
-		<h1>WebEdit</h1>
+		<h1 onclick="window.location.reload()" style="cursor:pointer;">WebEdit</h1>
 		<p id="load">This webapp requires Javascript.</p>
 		<div id="loaded" style="display:none;">
-			<p>Upload an image to get started.</p>
-			<input id="file" type="file" autocomplete="off" accept="image/*" onInput="start()">
+			<div style="margin:5px;">
+				<button onclick="document.getElementById('file').click()" class="biggerButton"><span class="material-icons ico">cloud_upload</span> Import a file</button>
+				<input id="file" type="file" autocomplete="off" accept="image/*" onInput="start()">
+				<p style="margin-top:1px;margin-bottom:1px;">or...</p>
+				<input id="url" autocomplete="off" placeholder="Insert URL here."><button class="altButton" onClick="dwnload()">start</button>
+			</div>
+			<button onclick="randomImg()">random image</button>
+			<button id="restore" onClick="start('restored')">restore previous work</button>
+			<p>The file or URL is never seen by me and never leaves your computer!</p>
+		</div>
+		<div id="dlImg" style="display:none;">
+			<div id="loader" class="spinner">
+				<div class="rect1"></div>
+				<div class="rect2"></div>
+				<div class="rect3"></div>
+				<div class="rect4"></div>
+				<div class="rect5"></div>
+			</div>
+			<p id="dinfo"></p>
+			<img id="originalImg" crossOrigin="anonymous" style="display:none;">
+			<canvas id="canv" style="display:none;">
 		</div>
 		<div id="editor" style="display:none;">
 			<div style="margin-bottom:5px;">
@@ -24,14 +43,13 @@
 					<button id="flipBtn" onClick="toggle('flip')">Flip</button>
 					<div id="adj" style="display:none;">
 						<button onClick="effect('bw')">Black & White</button>
-						<button id="rszBtn" onClick="toggle('resize')">Resize</button>
-						<div id="resize" style="display:none;">
-							
-						</div>
+						<button onClick="effect('blur')">Blur</button>
+						<button onClick="effect('blur5x')">Blur More</button>
+						<button onClick="effect('scharr')">Scharr Filter</button>
 					</div>
 					<div id="rotate" style="display:none;">
-						<button onClick="effect('rotateLeft')">Rotate Left</button>
-						<button onClick="effect('rotateRight')">Rotate Right</button>
+						<button onClick="effect('rotateLeft')">Rotate 90° Left</button>
+						<button onClick="effect('rotateRight')">Rotate 90° Right</button>
 					</div>
 					<div id="flip" style="display:none;">
 						<button onClick="effect('flipX')">Flip Horrizontally</button>
@@ -43,13 +61,27 @@
 			<image id="file_preview" onContextMenu="return false;" download>
 		</div>
 		<div id="export" style="display:none;">
-			<button class="biggerButton" onClick="exportAs('png')">Export as PNG</button>
-			<button class="biggerButton"onClick="toggle('really')">Start from Beginning</button>
-			<div id="really">
-				<p>Are you sure?</p>
-				<button onClick="start()">Yes</button>
-				<button onClick="toggle('really')">No</button>
+			<a download id="dlBtn" href=""><button class="biggerButton"><span class="material-icons ico">save_alt</span> Export as PNG</button></a>
+			<button class="biggerButton" onClick="uploadFile()"><span class="material-icons ico">publish</span> Upload to IMGBB</button>
+			<button class="biggerButton"onClick="toggle('really')"><span class="material-icons ico">refresh</span> Start from Beginning</button>
+			<div id="really" style="display:none;">
+				<p style="margin:0;">Are you sure?</p>
+				<button class="biggerButton" onClick="start('reset')">Yes</button>
+				<button class="biggerButton" onClick="toggle('really')">No</button>
 			</div>
+		</div>
+		<div id="upload" style="display:none;">
+			<h2 id="mainUp">Processing...</h2>
+			<div class="progMain"><div id="prog" class="progInner"></div></div>
+			<p id="upInfo"></p>
+			<div>
+				<img id="imagebb"><br>
+				<button class="biggerButton" onClick="copyImgbb()"><span class="material-icons ico">attach_file</span> copy link</button>
+				<button class="biggerButton" onClick="copyImgbb('direct')"><span class="material-icons ico">attach_file</span> copy direct link</button>
+			</div>
+			<input id="imgbb" style="display:none;">
+			<input id="imgbbDir" style="display:none;">
+			<p id="notif" style="margin:0;"></p>
 		</div>
 		<script src="https://www.lactame.com/lib/image-js/0.21.2/image.min.js"></script>
 		<script src="js/app.js"></script>

@@ -1,12 +1,50 @@
 document.getElementById("loaded").style.display = "";
 document.getElementById("load").style.display = "none";
+if (sessionStorage.getItem("lastAction") && !sessionStorage.getItem("lastAction").includes("blob:")) {
+	document.getElementById("restore").style.display = "";
+} else {
+	document.getElementById("restore").style.display = "none";
+}
 
-function start() {
-	document.getElementById("file_preview").src = window.URL.createObjectURL(document.getElementById("file").files[0]);
-	document.getElementById("loaded").style.display = "none";
-	document.getElementById("export").style.display = "none";
-	document.getElementById("editor").style.display = "";
-	document.title = "Editor | WebEdit"
+function start(r) {
+	if (!r) {
+		document.getElementById("file_preview").src = window.URL.createObjectURL(document.getElementById("file").files[0]);
+		document.getElementById("undoBtn").setAttribute("disabled", "true");
+		document.getElementById("undoBtn").classList.add("disabled");
+		document.getElementById("loaded").style.display = "none";
+		document.getElementById("export").style.display = "none";
+		document.getElementById("editor").style.display = "";
+		document.title = "Editor | WebEdit";
+		sessionStorage.setItem("startedFrom", "import");
+		sessionStorage.setItem("original", window.URL.createObjectURL(document.getElementById("file").files[0]));
+	} else if (r == "restored") {
+		document.getElementById("file_preview").src = sessionStorage.getItem("lastAction");
+		document.getElementById("undoBtn").setAttribute("disabled", "true");
+		document.getElementById("undoBtn").classList.add("disabled");
+		document.getElementById("loaded").style.display = "none";
+		document.getElementById("export").style.display = "none";
+		document.getElementById("editor").style.display = "";
+		document.title = "Editor | WebEdit";
+		sessionStorage.setItem("startedFrom", "restoration");
+		sessionStorage.setItem("original", sessionStorage.getItem("lastAction"));
+	} else if (r == "reset") {
+		if (!sessionStorage.getItem("original")) {
+			if (sessionStorage.getItem("lastAction")) {
+				start("restored");
+			} else {
+				randomImg();
+			}
+		} else {
+			document.getElementById("file_preview").src = sessionStorage.getItem("lastAction");
+			document.getElementById("undoBtn").setAttribute("disabled", "true");
+			document.getElementById("undoBtn").classList.add("disabled");
+			document.getElementById("loaded").style.display = "none";
+			document.getElementById("export").style.display = "none";
+			document.getElementById("editor").style.display = "";
+			document.title = "Editor | WebEdit";
+			sessionStorage.setItem("startedFrom", "reset");
+		}
+	}
 }
 
 async function effect(effect) {
@@ -33,10 +71,32 @@ async function effect(effect) {
 		let img = await IJS.Image.load(document.getElementById("file_preview").src);
 		let vfx = img.flipY()
 		document.getElementById("file_preview").src = vfx.toDataURL();
+	} else if (effect == "blur") {
+		let img = await IJS.Image.load(document.getElementById("file_preview").src);
+		let vfx = img.gaussianFilter(1)
+		document.getElementById("file_preview").src = vfx.toDataURL();
+	} else if (effect == "blur5x") {
+		let img = await IJS.Image.load(document.getElementById("file_preview").src);
+		let vfx = img.gaussianFilter(4)
+		document.getElementById("file_preview").src = vfx.toDataURL();
+	} else if (effect == "scharr") {
+		let img = await IJS.Image.load(document.getElementById("file_preview").src);
+		let vfx = img.scharrFilter()
+		document.getElementById("file_preview").src = vfx.toDataURL();
 	}
 }
 
-function toggle(menu) {
+async function info(detail) {
+	if (detail == "w") {
+		var img = await IJS.Image.load(document.getElementById("file_preview").src);
+		return img.width;
+	} else if (detail == "h") {
+		var img = await IJS.Image.load(document.getElementById("file_preview").src);
+		return img.height;
+	}
+}
+
+async function toggle(menu) {
 	if (menu == "i") {
 		if (document.getElementById("imageTop").style.display == "") {
 			document.getElementById("imageTop").style.display = "none";
@@ -88,6 +148,14 @@ function toggle(menu) {
 		} else {
 			document.getElementById("rszBtn").classList.add("active");
 			document.getElementById("resize").style.display = "";
+			document.getElementById("w").value = await info("w");
+			document.getElementById("h").value = await info("h");
+		}
+	} else if (menu == "really") {
+		if (document.getElementById("really").style.display == "") {
+			document.getElementById("really").style.display = "none";
+		} else {
+			document.getElementById("really").style.display = "";
 		}
 	}
 }
@@ -96,10 +164,8 @@ function exportImg() {
 	document.getElementById("editor").style.display = "none";
 	document.getElementById("export").style.display = "";
 	document.title = "Export | WebEdit";
-}
-
-function exportAs(type) {
-	
+	document.getElementById("dlBtn").href = document.getElementById("file_preview").src;
+	document.getElementById("really").style.display = "none";
 }
 
 function undo() {
@@ -107,5 +173,89 @@ function undo() {
 		document.getElementById("file_preview").src = sessionStorage.getItem("lastAction");
 		document.getElementById("undoBtn").setAttribute("disabled", "true")
 		document.getElementById("undoBtn").classList.add("disabled");
+	}
+}
+
+function randomImg() {
+	document.getElementById("url").value = "https://picsum.photos/500/400"
+	dwnload();
+}
+
+function dwnload() {
+	document.getElementById("originalImg").src = "https://corsanywhere.herokuapp.com/" + document.getElementById("url").value;
+	document.getElementById("dlImg").style.display = "";
+	document.getElementById("loaded").style.display = "none";
+	document.getElementById("export").style.display = "none";
+	document.getElementById("editor").style.display = "none";
+	document.getElementById("dinfo").innerHTML = "downloading image to computer...";
+	document.getElementById("originalImg").onload = function() {
+		document.getElementById("dinfo").innerHTML = "converting..."
+		document.getElementById("canv").width = document.getElementById("originalImg").width;
+		document.getElementById("canv").height = document.getElementById("originalImg").height;
+		var w = document.getElementById("canv").getContext("2d");
+		w.drawImage(document.getElementById("originalImg"),0,0);
+		document.getElementById("file_preview").src = document.getElementById("canv").toDataURL("image/png");;
+		document.getElementById("editor").style.display = "";
+		document.getElementById("dlImg").style.display = "none";
+		document.title = "Editor | WebEdit";
+		sessionStorage.setItem("startedFrom", "url");
+	}
+}
+
+async function uploadFile() {
+	document.title = "Upload | WebEdit";
+	document.getElementById("export").style.display = "none";
+	document.getElementById("upload").style.display = "";
+	document.getElementById("upInfo").style.display = "";
+	document.getElementById("mainUp").innerHTML = "Processing..."
+	document.getElementById("prog").style = "width:25%;"
+	document.getElementById("upInfo").innerHTML = "processing image...";
+	let img = await IJS.Image.load(document.getElementById("file_preview").src);
+	document.getElementById("upInfo").innerHTML = "converting...";
+	let b64Data = img.toBase64();
+	document.getElementById("prog").style = "width:100%;"
+	document.getElementById("mainUp").innerHTML = "Uploading...";
+	document.getElementById("prog").style = "width:0%;"
+	document.getElementById("upInfo").innerHTML = "configuring...";
+	var xhr = new XMLHttpRequest();
+	var fd = new FormData();
+	fd.append("image", b64Data)
+	document.getElementById("upInfo").innerHTML = "uploading...";
+	xhr.open("POST", "https://api.imgbb.com/1/upload?key=e183b3a1e3e2711122af70d260528ef3");
+	xhr.send(fd);
+	xhr.onload = function() {
+		if (xhr.status == 200) {
+			var d = JSON.parse(xhr.responseText);
+			document.getElementById("prog").style = "width:100%;"
+			document.getElementById("mainUp").innerHTML = "Uploaded!";
+			document.getElementById("imgbbDir").value = d.data.url;
+			document.getElementById("imgbb").value = d.data.url_viewer;
+			document.getElementById("upInfo").style.display = "none";
+			document.getElementById("imagebb").src = d.data.url;
+		}
+	}
+}
+
+function copyImgbb(a) {
+	if (!a) {
+		document.getElementById("imgbb").style.display = "";
+		document.getElementById("imgbb").select();
+		document.getElementById("imgbb").setSelectionRange(0,999999);
+		document.execCommand("copy");
+		document.getElementById("imgbb").style.display = "none";
+		document.getElementById("notif").innerHTML = "copied viewer link!";
+		setTimeout(function() {
+			document.getElementById("notif").innerHTML = "";
+		},2000)
+	} else if (a == "direct") {
+		document.getElementById("imgbbDir").style.display = "";
+		document.getElementById("imgbbDir").select();
+		document.getElementById("imgbbDir").setSelectionRange(0,999999);
+		document.execCommand("copy");
+		document.getElementById("imgbbDir").style.display = "none";
+		document.getElementById("notif").innerHTML = "copied direct link!";
+		setTimeout(function() {
+			document.getElementById("notif").innerHTML = "";
+		},2000)
 	}
 }
