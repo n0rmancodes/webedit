@@ -62,26 +62,12 @@
 		</div>
 		<div id="export" style="display:none;">
 			<a download id="dlBtn" href=""><button class="biggerButton"><span class="material-icons ico">save_alt</span> Export as PNG</button></a>
-			<button class="biggerButton" onClick="uploadFile()"><span class="material-icons ico">publish</span> Upload to IMGBB</button>
 			<button class="biggerButton"onClick="toggle('really')"><span class="material-icons ico">refresh</span> Start from Beginning</button>
 			<div id="really" style="display:none;">
 				<p style="margin:0;">Are you sure?</p>
 				<button class="biggerButton" onClick="start('reset')">Yes</button>
 				<button class="biggerButton" onClick="toggle('really')">No</button>
 			</div>
-		</div>
-		<div id="upload" style="display:none;">
-			<h2 id="mainUp">Processing...</h2>
-			<div class="progMain"><div id="prog" class="progInner"></div></div>
-			<p id="upInfo"></p>
-			<div>
-				<img id="imagebb"><br>
-				<button class="biggerButton" onClick="copyImgbb()"><span class="material-icons ico">attach_file</span> copy link</button>
-				<button class="biggerButton" onClick="copyImgbb('direct')"><span class="material-icons ico">attach_file</span> copy direct link</button>
-			</div>
-			<input id="imgbb" style="display:none;">
-			<input id="imgbbDir" style="display:none;">
-			<p id="notif" style="margin:0;"></p>
 		</div>
 		<script src="https://www.lactame.com/lib/image-js/0.21.2/image.min.js"></script>
 		<script src="js/app.js"></script>
